@@ -1,0 +1,228 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int         @id @default(autoincrement())
+  username      String      @unique
+  password_hash String      
+  avatar        String?
+  doctor_id     Int?
+  patient_id    Int?
+  pharmacy_id   Int?
+  created_at    DateTime
+  updated_at    DateTime    @updatedAt
+  last_active   DateTime?
+
+  doctor        Doctor?     @relation(fields: [doctor_id], references: [id])
+  patient       Patient?    @relation(fields: [patient_id], references: [id])
+  pharmacy      Pharmacy?   @relation(fields: [pharmacy_id], references: [id])
+
+  phones        Phone[]
+  emails        Email[]
+
+  @@map("users")
+}
+
+model Patient {
+  id            Int         @id @default(autoincrement())
+  first_name    String
+  last_name     String
+  middle_name   String?
+  sex           Sex
+  dob           DateTime
+  national_id   String      @unique
+  tax_id        String      @unique
+  address_id    Int
+  created_at    DateTime
+  updated_at    DateTime    @updatedAt
+  
+  users         User[]
+  adress        Address     @relation(fields: [address_id], references: [id])
+
+  @@map("patients")
+}
+
+model Phone {
+  id            Int
+  number        String      @unique
+  user_id       Int
+  created_at    DateTime
+  updated_at    DateTime
+
+  user          User        @relation(fields: [user_id], references: [id])
+
+  @@map("phones")
+}
+
+model Email {
+  id            Int
+  email        String       @unique
+  user_id       Int
+  created_at    DateTime
+  updated_at    DateTime
+
+  user          User        @relation(fields: [user_id], references: [id])
+
+  @@map("emails")
+}
+
+model Address {
+  id            Int         @id @default(autoincrement())
+  address       String
+  city          String
+  region        String?
+  postal_code   String
+  country       String
+  
+  created_at    DateTime
+  updated_at    DateTime
+
+  patients      Patient[]
+
+  @@map("addresses")
+}
+
+model Doctor {
+  id            Int             @id @default(autoincrement())
+  first_name    String
+  last_name     String
+  middle_name   String?
+  sex           Sex
+  dob           DateTime
+  location_id   Int
+  speciality_id Int
+  speciality    Speciality      @relation(fields: [speciality_id], references: [id])
+  location      Location        @relation(fields: [location_id], references: [id])
+  prescriptions Prescription[]
+  users         User[]
+  signature     Signature?
+
+  @@map("doctors")
+}
+
+model Pharmacy {
+  id            Int             @id @default(autoincrement())
+  name          String
+  created_at    DateTime
+  updated_at    DateTime        @updatedAt
+  users         User[]
+
+  locations    PharmacyLocation[]
+
+  @@map("pharmacies")
+}
+
+model PharmacyLocation {
+  // id            Int     @id @default(autoincrement())
+  pharmacy      Pharmacy    @relation(fields: [pharmacy_id], references: [id])
+  pharmacy_id   Int     
+  location      Location    @relation(fields: [location_id], references: [id])
+  location_id   Int
+  assigned_at   DateTime    @default(now())    
+
+  @@id([pharmacy_id, location_id])
+  @@map("pharmacy_location_map")
+
+}
+
+model Speciality {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String
+  created_at  DateTime
+  updated_at  DateTime    @updatedAt
+
+  doctors     Doctor[]
+
+  @@map("specialities")
+}
+
+model Location {
+  id          Int           @id @default(autoincrement())
+  name        String
+  address_id  Int?
+  description String
+  created_at  DateTime
+  updated_at  DateTime      @updatedAt
+
+  doctors     Doctor[]
+  pharmacies  PharmacyLocation[]
+
+  @@map("locations")
+}
+
+model Prescription {
+  id              Int           @id @default(autoincrement())
+  doctor_id       Int   
+  pharmacy_id     Int
+
+  status          String
+  signature       String
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+  sogned_at       DateTime?
+  doctor          Doctor        @relation(fields: [doctor_id], references: [id])
+  items           PrescriptionItem[]
+
+  @@map("prescriptions")
+}
+
+model PrescriptionItem {
+  id                Int             @id @default(autoincrement())
+  prescription_id   Int
+  product_id        Int
+  dosage            String
+  frequency         String
+  dispence          Int
+  notes             String
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @updatedAt
+  checked_at        DateTime?        
+  prescription      Prescription    @relation(fields: [prescription_id], references: [id])
+  product           Product         @relation(fields: [product_id], references: [id])
+
+  @@map("perscription_items")
+}
+
+model Product {
+  id              Int           @id @default(autoincrement())
+  name            String
+  description     String
+  created_at      DateTime      @default(now())
+  prescriptions   PrescriptionItem[]
+  @@map("products")
+}
+
+model Signature {
+  id          String      @id @default(uuid())
+  doctor_id   Int         @unique
+  doctor      Doctor      @relation(fields: [doctor_id], references: [id])
+
+  @@map("signatures")
+}
+
+model Appointment {
+  id              Int         @id @default(autoincrement())
+  scheduled_at    DateTime
+  notes           String
+  patient_id      Int
+  doctor_id       Int
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+
+  @@map("appointments")
+}
+
+enum Sex {
+  MALE
+  FEMALE
+}

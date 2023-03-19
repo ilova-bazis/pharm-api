@@ -18,6 +18,10 @@ model User {
   doctor_id     Int?
   patient_id    Int?
   pharmacy_id   Int?
+  admin_id      Int?
+  
+  person_id     Int?
+
   created_at    DateTime
   updated_at    DateTime    @updatedAt
   last_active   DateTime?
@@ -25,6 +29,7 @@ model User {
   doctor        Doctor?     @relation(fields: [doctor_id], references: [id])
   patient       Patient?    @relation(fields: [patient_id], references: [id])
   pharmacy      Pharmacy?   @relation(fields: [pharmacy_id], references: [id])
+  person        Person?     @relation(fields: [person_id], references: [id])
 
   phones        Phone[]
   emails        Email[]
@@ -32,23 +37,48 @@ model User {
   @@map("users")
 }
 
-model Patient {
-  id            Int         @id @default(autoincrement())
+model Person {
+  id            Int          @id @default(autoincrement())
   first_name    String
-  last_name     String
+  last_name     String?
   middle_name   String?
   sex           Sex
   dob           DateTime
-  national_id   String      @unique
-  tax_id        String      @unique
+  national_id   String?      @unique
+  tax_id        String?      @unique
   address_id    Int
+  created_at    DateTime
+  updated_at    DateTime    @updatedAt
+
+  users         User[]
+  adress        Address     @relation(fields: [address_id], references: [id])
+
+  @@map("persons")
+}
+
+model Patient {
+  id            Int         @id @default(autoincrement())
+  
   created_at    DateTime
   updated_at    DateTime    @updatedAt
   
   users         User[]
-  adress        Address     @relation(fields: [address_id], references: [id])
+  
 
   @@map("patients")
+}
+
+model Doctor {
+  id            Int             @id @default(autoincrement())
+  location_id   Int
+  speciality_id Int
+  speciality    Speciality      @relation(fields: [speciality_id], references: [id])
+  location      Location        @relation(fields: [location_id], references: [id])
+  prescriptions Prescription[]
+  users         User[]
+  signature     Signature?
+
+  @@map("doctors")
 }
 
 model Phone {
@@ -65,7 +95,7 @@ model Phone {
 
 model Email {
   id            Int
-  email        String       @unique
+  email         String       @unique
   user_id       Int
   created_at    DateTime
   updated_at    DateTime
@@ -86,27 +116,16 @@ model Address {
   created_at    DateTime
   updated_at    DateTime
 
-  patients      Patient[]
+  persons      Person[]
 
   @@map("addresses")
 }
 
-model Doctor {
+model Admin {
   id            Int             @id @default(autoincrement())
-  first_name    String
-  last_name     String
-  middle_name   String?
-  sex           Sex
-  dob           DateTime
-  location_id   Int
-  speciality_id Int
-  speciality    Speciality      @relation(fields: [speciality_id], references: [id])
-  location      Location        @relation(fields: [location_id], references: [id])
-  prescriptions Prescription[]
-  users         User[]
-  signature     Signature?
-
-  @@map("doctors")
+  
+  updated_at    DateTime        @updatedAt
+  created_at    DateTime
 }
 
 model Pharmacy {
@@ -153,7 +172,7 @@ model Location {
   description String
   created_at  DateTime
   updated_at  DateTime      @updatedAt
-
+  type        LocationType
   doctors     Doctor[]
   pharmacies  PharmacyLocation[]
 
@@ -213,6 +232,7 @@ model Signature {
 model Appointment {
   id              Int         @id @default(autoincrement())
   scheduled_at    DateTime
+  end_at          DateTime
   notes           String
   patient_id      Int
   doctor_id       Int
@@ -225,4 +245,14 @@ model Appointment {
 enum Sex {
   MALE
   FEMALE
+}
+
+enum LocationType {
+  PHARMACY
+  CLINIC
+  POLYCLINIC
+  HOSPITAL
+  LABORATORY
+  DIAGNOSTIC_CENTER
+  DENTAL_CLINIC
 }

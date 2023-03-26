@@ -12,14 +12,14 @@ export class DoctorController {
     async getMe(@GetUser() user: User) {
         return await this.doctorService.getMe(user);
     }
+    @Get('all')
+    async getAllDcotor(@GetUser() user: User): Promise<DoctorDto[]> {
+        return await this.doctorService.getAllDoctor(user);
+    }
 
     @Get(':id')
     async getDoctor(@GetUser() user: User, @Param('id') doctorId: number) {
         return await this.doctorService.getDoctor(user, doctorId);
     }
 
-    @Get('all')
-    async getAllDcotor(@GetUser() user: User): Promise<DoctorDto[]> {
-        return await this.doctorService.getAllDoctor(user);
-    }
 }

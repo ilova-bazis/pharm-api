@@ -183,12 +183,12 @@ model Prescription {
   id              Int           @id @default(autoincrement())
   doctor_id       Int   
   pharmacy_id     Int
-
+  patient_id      Int
   status          String
   signature       String
   created_at      DateTime      @default(now())
   updated_at      DateTime      @updatedAt
-  sogned_at       DateTime?
+  signed_at       DateTime?
   doctor          Doctor        @relation(fields: [doctor_id], references: [id])
   items           PrescriptionItem[]
 
@@ -201,7 +201,7 @@ model PrescriptionItem {
   product_id        Int
   dosage            String
   frequency         String
-  dispence          Int
+  dispense          Int
   notes             String
   created_at        DateTime        @default(now())
   updated_at        DateTime        @updatedAt
@@ -255,4 +255,11 @@ enum LocationType {
   LABORATORY
   DIAGNOSTIC_CENTER
   DENTAL_CLINIC
+}
+
+enum PrescriptionStatus {
+  PENDING
+  SIGNED
+  DISPENSED
+  CANCELLED
 }

@@ -61,4 +61,22 @@ export class DoctorService {
         });
         return new DoctorDto(doctor, person);
     }
+
+    async getAllDoctor(user: User): Promise<DoctorDto[]> {
+        const users = await this.prisma.user.findMany({
+            where: {
+                doctor_id: {
+                    not: null,
+                },
+            },
+            include: {
+                person: true,
+                doctor: true,
+            },
+        });
+        const doctors: DoctorDto[] = users.map((u) => {
+            return new DoctorDto(u.doctor, u.person);
+        });
+        return doctors;
+    }
 }

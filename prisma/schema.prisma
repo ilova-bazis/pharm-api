@@ -266,4 +266,6 @@ enum PrescriptionStatus {
   SIGNED
   DISPENSED
   CANCELLED
+
+  @@map("prescription_status")
 }

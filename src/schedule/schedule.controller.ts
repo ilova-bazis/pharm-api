@@ -25,25 +25,33 @@ export class ScheduleController {
     constructor(private scheduleService: ScheduleService) {}
 
     @Get('/all')
-    async getAll(@GetUser() user: User): Promise<ScheduleDto[]> {
+    async getAll(@GetUser() user: User): Promise<{ schedules: ScheduleDto[] }> {
         const appointments = await this.scheduleService.getAll(user);
 
-        return appointments.map((val) => {
-            return val;
-        });
+        return {
+            schedules: appointments.map((val) => {
+                return val;
+            }),
+        };
     }
 
     @Get('today')
-    async getToday(@GetUser() user: User): Promise<ScheduleDto[]> {
+    async getToday(
+        @GetUser() user: User,
+    ): Promise<{ schedules: ScheduleDto[] }> {
         const appointments = await this.scheduleService.getToday(user);
 
-        return appointments.map((val) => {
-            return val;
-        });
+        return {
+            schedules: appointments.map((val) => {
+                return val;
+            }),
+        };
     }
 
     @Post('range')
-    async getInRange(@GetUser() user: User): Promise<ScheduleDto[]> {
+    async getInRange(
+        @GetUser() user: User,
+    ): Promise<{ schedules: ScheduleDto[] }> {
         throw new InternalServerErrorException('Not Implemented');
     }
 
@@ -75,5 +83,4 @@ export class ScheduleController {
     ) {
         await this.scheduleService.delete(user, schdeduleId);
     }
-    
 }

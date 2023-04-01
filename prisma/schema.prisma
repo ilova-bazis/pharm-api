@@ -68,6 +68,7 @@ model Patient {
   person        Person?   
   users         User[]
   
+  appointments  Appointment[]
 
   @@map("patients")
 }
@@ -81,6 +82,8 @@ model Doctor {
   prescriptions Prescription[]
   users         User[]
   signature     Signature?
+
+  appointments  Appointment[]
 
   @@map("doctors")
 }
@@ -243,6 +246,9 @@ model Appointment {
   created_at      DateTime    @default(now())
   updated_at      DateTime    @updatedAt
 
+  patient         Patient     @relation(fields: [patient_id], references: [id])
+  doctor          Doctor      @relation(fields: [doctor_id], references: [id])
+  
   @@map("appointments")
 }
 

@@ -1,23 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { Appointment, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UpdateScheduleDto } from './dto';
+import { ScheduleDto, UpdateScheduleDto } from './dto';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 
 @Injectable()
 export class ScheduleService {
     constructor(private prisma: PrismaService) {}
 
-    async getAll(user: User): Promise<Appointment[]> {
+    async getAll(user: User): Promise<ScheduleDto[]> {
         const appointments = await this.prisma.appointment.findMany({
             where: {
                 doctor_id: user.doctor_id,
             },
         });
-        return appointments;
+        const schedules = Promise.all(
+            appointments.map(async (val) => {
+                const person = await this.prisma.person.findUnique({
+                    where: {
+                        patient_id: val.patient_id,
+                    },
+                });
+                return new ScheduleDto(val, person);
+            }),
+        );
+        return schedules;
     }
 
-    async getToday(user: User): Promise<Appointment[]> {
+    async getToday(user: User): Promise<ScheduleDto[]> {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const nextDay = new Date();
@@ -31,10 +41,21 @@ export class ScheduleService {
                 },
             },
         });
-        return appointments;
+        const schedules = Promise.all(
+            appointments.map(async (val) => {
+                const person = await this.prisma.person.findUnique({
+                    where: {
+                        patient_id: val.patient_id,
+                    },
+                });
+                return new ScheduleDto(val, person);
+            }),
+        );
+
+        return schedules;
     }
 
-    async create(user: User, dto: CreateScheduleDto): Promise<Appointment> {
+    async create(user: User, dto: CreateScheduleDto): Promise<ScheduleDto> {
         const appointment = await this.prisma.appointment.create({
             data: {
                 doctor_id: dto.doctor_id ?? user.doctor_id,
@@ -44,7 +65,12 @@ export class ScheduleService {
                 notes: dto.notes,
             },
         });
-        return appointment;
+        const person = await this.prisma.person.findUnique({
+            where: {
+                patient_id: appointment.patient_id,
+            },
+        });
+        return new ScheduleDto(appointment, person);
     }
 
     async update(User: User, schedule_id: number, dto: UpdateScheduleDto) {

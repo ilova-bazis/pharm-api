@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { PatientDto } from './dto';
+import { CreatePatientDto, PatientDto } from './dto';
 
 @Injectable()
 export class PatientService {
@@ -42,5 +42,38 @@ export class PatientService {
             (p) => new PatientDto(p.patient_id, p, p.adress),
         );
         return { patients: dtos };
+    }
+
+    async create(dto: CreatePatientDto): Promise<PatientDto> {
+        const address = await this.prisma.address.create({
+            data: {
+                city: dto.profile.address.city,
+                country: dto.profile.address.country,
+                address: dto.profile.address.address,
+                created_at: new Date(),
+                updated_at: new Date(),
+                postal_code: dto.profile.address.postal_code,
+            },
+        });
+
+        const patient = await this.prisma.patient.create({
+            data: {
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+        });
+
+        const person = await this.prisma.person.create({
+            data: {
+                first_name: dto.profile.first_name,
+                last_name: dto.profile.last_name,
+                middle_name: dto.profile.middle_name,
+                dob: dto.profile.dob,
+                sex: dto.profile.sex,
+                address_id: address.id,
+                patient_id: patient.id,
+            },
+        });
+        return new PatientDto(patient.id, person, address);
     }
 }

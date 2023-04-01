@@ -27,7 +27,7 @@ export class ScheduleController {
         const appointments = await this.scheduleService.getAll(user);
 
         return appointments.map((val) => {
-            return new ScheduleDto(val);
+            return val;
         });
     }
 
@@ -36,7 +36,7 @@ export class ScheduleController {
         const appointments = await this.scheduleService.getToday(user);
 
         return appointments.map((val) => {
-            return new ScheduleDto(val);
+            return val;
         });
     }
 
@@ -51,7 +51,7 @@ export class ScheduleController {
         @Body() dto: CreateScheduleDto,
     ): Promise<ScheduleDto> {
         const appointmet = await this.scheduleService.create(user, dto);
-        return new ScheduleDto(appointmet);
+        return appointmet;
     }
 
     @Put(':id')

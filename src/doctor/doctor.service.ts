@@ -36,12 +36,22 @@ export class DoctorService {
                     last_name: '',
                     dob: new Date(0),
                     sex: 'MALE',
-                    created_at: new Date(),
                     address_id: 0,
+                    user_id: user.id,
                 },
             });
+            await this.prisma.user.update({
+                where: {
+                    id: user.id,
+                },
+                data: {
+                    person_id: p.id,
+                },
+            });
+
             person = p;
         }
+
         return new DoctorDto(doctor, person);
     }
 

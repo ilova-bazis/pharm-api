@@ -47,13 +47,13 @@ model Person {
   national_id   String?      @unique
   tax_id        String?      @unique
   address_id    Int
-  created_at    DateTime
+  created_at    DateTime    @default(now())
   updated_at    DateTime    @updatedAt
-  patient_id    Int         @unique
+  patient_id    Int?         @unique
 
   user_id       Int?
   users         User[]
-  patient       Patient     @relation(fields: [patient_id], references: [id])
+  patient       Patient?     @relation(fields: [patient_id], references: [id])
   adress        Address     @relation(fields: [address_id], references: [id])
 
   @@map("persons")
@@ -188,7 +188,7 @@ model Prescription {
   doctor_id       Int   
   pharmacy_id     Int
   patient_id      Int
-  status          PrescriptionStatus
+  status          String
   signature       String
   created_at      DateTime      @default(now())
   updated_at      DateTime      @updatedAt
@@ -261,11 +261,11 @@ enum LocationType {
   DENTAL_CLINIC
 }
 
-enum PrescriptionStatus {
-  PENDING
-  SIGNED
-  DISPENSED
-  CANCELLED
+// enum PrescriptionStatus {
+//   PENDING
+//   SIGNED
+//   DISPENSED
+//   CANCELLED
 
-  @@map("prescription_status")
-}
+//   @@map("prescription_status")
+// }

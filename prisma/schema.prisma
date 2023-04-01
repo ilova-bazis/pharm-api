@@ -188,7 +188,7 @@ model Prescription {
   doctor_id       Int   
   pharmacy_id     Int
   patient_id      Int
-  status          String
+  status          PrescriptionStatus
   signature       String
   created_at      DateTime      @default(now())
   updated_at      DateTime      @updatedAt

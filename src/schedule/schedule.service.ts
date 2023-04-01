@@ -11,7 +11,7 @@ export class ScheduleService {
     async getAll(user: User): Promise<ScheduleDto[]> {
         const appointments = await this.prisma.appointment.findMany({
             where: {
-                doctor_id: user.doctor_id,
+                doctor_id: user.doctor_id ?? undefined,
             },
         });
         const schedules = Promise.all(
@@ -34,7 +34,7 @@ export class ScheduleService {
         nextDay.setHours(24, 0, 0, 0);
         const appointments = await this.prisma.appointment.findMany({
             where: {
-                doctor_id: user.doctor_id,
+                doctor_id: user.doctor_id ?? undefined,
                 scheduled_at: {
                     gte: today,
                     lt: nextDay,

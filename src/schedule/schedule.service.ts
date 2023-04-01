@@ -84,4 +84,12 @@ export class ScheduleService {
             },
         });
     }
+
+    async delete(User: User, schedule_id: number) {
+        await this.prisma.appointment.delete({
+            where: {
+                id: schedule_id,
+            },
+        });
+    }
 }

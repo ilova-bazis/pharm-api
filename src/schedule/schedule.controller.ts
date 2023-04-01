@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     HttpCode,
     HttpStatus,
@@ -65,4 +66,14 @@ export class ScheduleController {
     ) {
         await this.scheduleService.update(user, schdeduleId, dto);
     }
+
+    @Delete(':id')
+    @HttpCode(HttpStatus.ACCEPTED)
+    async delete(
+        @GetUser() user: User,
+        @Param('id', ParseIntPipe) schdeduleId: number,
+    ) {
+        await this.scheduleService.delete(user, schdeduleId);
+    }
+    
 }

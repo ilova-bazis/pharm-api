@@ -1,9 +1,11 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { GetUser } from 'src/auth/decorator';
+import { JwtGuard } from 'src/auth/guard';
 import { DoctorDto } from 'src/user/dto/doctor.dto';
 import { DoctorService } from './doctor.service';
 
+@UseGuards(JwtGuard)
 @Controller('doctor')
 export class DoctorController {
     constructor(private doctorService: DoctorService) {}

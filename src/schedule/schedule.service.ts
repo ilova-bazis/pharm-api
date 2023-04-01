@@ -60,8 +60,8 @@ export class ScheduleService {
             data: {
                 doctor_id: dto.doctor_id ?? user.doctor_id,
                 patient_id: dto.patient_id,
-                scheduled_at: dto.scheduled_at,
-                end_at: dto.end_at,
+                scheduled_at: new Date(dto.scheduled_at),
+                end_at: new Date(dto.end_at),
                 notes: dto.notes,
             },
         });

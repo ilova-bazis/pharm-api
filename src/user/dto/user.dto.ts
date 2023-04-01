@@ -1,5 +1,6 @@
 import { User } from '@prisma/client';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { ProfileDto } from 'src/profile/dto';
 
 export class UserDto {
     id: number;

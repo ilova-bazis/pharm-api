@@ -7,4 +7,5 @@ export class CreateScheduleDto {
     @IsString()
     notes: string;
     patient_id: number;
+    doctor_id?: number;
 }

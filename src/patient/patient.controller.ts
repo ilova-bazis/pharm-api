@@ -1,4 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
+import { PatientDto } from './dto';
 import { PatientService } from './patient.service';
 
 @Controller('patient')
@@ -11,7 +12,9 @@ export class PatientController {
     }
 
     @Get('search')
-    async search(@Query('name') name: string): Promise<string> {
-        return 'This is a test';
+    async search(
+        @Query('name') name: string,
+    ): Promise<{ patients: PatientDto[] }> {
+        return this.patientService.search(name);
     }
 }

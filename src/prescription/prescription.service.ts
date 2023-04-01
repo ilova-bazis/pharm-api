@@ -44,6 +44,6 @@ export class PrescriptionService {
 
     // add items to prescription
     async addItem(user: User, prescriptionId: number, itemId: number) {
-
+        return;
     }
 }

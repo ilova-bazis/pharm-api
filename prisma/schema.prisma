@@ -49,8 +49,11 @@ model Person {
   address_id    Int
   created_at    DateTime
   updated_at    DateTime    @updatedAt
+  patient_id    Int         @unique
 
+  user_id       Int?
   users         User[]
+  patient       Patient     @relation(fields: [patient_id], references: [id])
   adress        Address     @relation(fields: [address_id], references: [id])
 
   @@map("persons")
@@ -62,6 +65,7 @@ model Patient {
   created_at    DateTime
   updated_at    DateTime    @updatedAt
   
+  person        Person?   
   users         User[]
   
 

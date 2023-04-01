@@ -9,6 +9,7 @@ import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { UserDto } from 'src/user/dto';
 @Injectable()
 export class AuthService {
     constructor(
@@ -31,7 +32,7 @@ export class AuthService {
             throw new UnauthorizedException('Wrong username or password');
         }
         const token = await this.signToken(user.id, user.username);
-        return { access_token: token };
+        return { access_token: token, user: new UserDto(user) };
     }
 
     async signup(dto: SignupDto) {

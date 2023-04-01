@@ -17,4 +17,9 @@ export class PrescriptionController {
     ): Promise<PrescriptionDto> {
         return this.prescriptionService.create(user, dto);
     }
+
+    @Post('all')
+    async getAll(@GetUser() user: User): Promise<PrescriptionDto[]> {
+        return this.prescriptionService.getAll(user);
+    }
 }

@@ -37,7 +37,7 @@ export class ScheduleService {
     async create(user: User, dto: CreateScheduleDto): Promise<Appointment> {
         const appointment = await this.prisma.appointment.create({
             data: {
-                doctor_id: user.doctor_id,
+                doctor_id: dto.doctor_id ?? user.doctor_id,
                 patient_id: dto.patient_id,
                 scheduled_at: dto.scheduled_at,
                 end_at: dto.end_at,

@@ -5,6 +5,7 @@ import {
     HttpCode,
     HttpStatus,
     InternalServerErrorException,
+    Logger,
     Param,
     ParseIntPipe,
     Post,
@@ -50,6 +51,7 @@ export class ScheduleController {
         @GetUser() user: User,
         @Body() dto: CreateScheduleDto,
     ): Promise<ScheduleDto> {
+        Logger.debug(dto);
         const appointmet = await this.scheduleService.create(user, dto);
         return appointmet;
     }

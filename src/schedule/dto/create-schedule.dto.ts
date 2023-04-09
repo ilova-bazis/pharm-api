@@ -3,7 +3,7 @@ import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateScheduleDto {
     @IsNumber()
-    scheduled_at: Date;
+    scheduled_at: number;
     @IsNumber()
     end_at: Date;
     @IsString()

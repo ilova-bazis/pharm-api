@@ -7,7 +7,7 @@ export class PrescriptionItemDto {
     notes: string;
     frequency: string;
     dosage: string;
-    created_at: Date;
+    created_at: number;
 
     constructor(item: PrescriptionItem) {
         this.id = item.id;
@@ -16,6 +16,6 @@ export class PrescriptionItemDto {
         this.notes = item.notes;
         this.frequency = item.frequency;
         this.dosage = item.dosage;
-        this.created_at = item.created_at;
+        this.created_at = item.created_at.getTime();
     }
 }

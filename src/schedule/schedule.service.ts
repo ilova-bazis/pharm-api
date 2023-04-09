@@ -76,8 +76,8 @@ export class ScheduleService {
     async update(User: User, schedule_id: number, dto: UpdateScheduleDto) {
         await this.prisma.appointment.update({
             data: {
-                scheduled_at: dto.scheduled_at ?? undefined,
-                end_at: dto.end_at ?? undefined,
+                scheduled_at: new Date(dto.scheduled_at) ?? undefined,
+                end_at: new Date(dto.end_at) ?? undefined,
             },
             where: {
                 id: schedule_id,

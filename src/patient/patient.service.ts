@@ -68,7 +68,7 @@ export class PatientService {
                 first_name: dto.profile.first_name,
                 last_name: dto.profile.last_name,
                 middle_name: dto.profile.middle_name,
-                dob: dto.profile.dob,
+                dob: new Date(dto.profile.dob),
                 sex: dto.profile.sex,
                 address_id: address.id,
                 patient_id: patient.id,

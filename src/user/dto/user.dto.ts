@@ -9,9 +9,9 @@ export class UserDto {
     doctor_id?: number;
     patient_id?: number;
     pharmacy_id?: number;
-    created_at: Date;
-    updated_at: Date;
-    last_active?: Date;
+    created_at: number;
+    updated_at: number;
+    last_active?: number;
 
     constructor(user: User) {
         this.id = user.id;
@@ -20,8 +20,8 @@ export class UserDto {
         this.doctor_id = user.doctor_id;
         this.patient_id = user.patient_id;
         this.pharmacy_id = user.pharmacy_id;
-        this.created_at = user.created_at;
-        this.updated_at = user.updated_at;
-        this.last_active = user.last_active;
+        this.created_at = user.created_at.getTime();
+        this.updated_at = user.updated_at.getTime();
+        this.last_active = user.last_active.getTime();
     }
 }

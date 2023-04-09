@@ -7,7 +7,7 @@ export class ProfileDto {
     last_name?: string;
     middle_name?: string;
     sex: Sex;
-    dob: Date;
+    dob: number;
     national_id: string;
     tax_id: string;
     address: AddressDto;
@@ -25,7 +25,7 @@ export class ProfileDto {
         this.first_name = person.first_name;
         this.last_name = person.last_name;
         this.middle_name = person.middle_name;
-        this.dob = person.dob;
+        this.dob = person.dob.getTime();
         this.sex = person.sex;
         this.national_id = person.national_id;
         this.tax_id = person.tax_id;

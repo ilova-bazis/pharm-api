@@ -21,7 +21,7 @@ export class ProfileService {
         });
         const person = await this.prisma.person.create({
             data: {
-                dob: dto.dob,
+                dob: new Date(dto.dob),
                 first_name: dto.first_name,
                 sex: dto.sex,
                 last_name: dto.last_name,

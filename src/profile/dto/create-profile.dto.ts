@@ -6,7 +6,7 @@ export class CreateProfileDto {
     last_name?: string;
     middle_name?: string;
     sex: Sex;
-    dob: string;
+    dob: number;
     national_id: string;
     tax_id: string;
     address: CreateAddressDto;

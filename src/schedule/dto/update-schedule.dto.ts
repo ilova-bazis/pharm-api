@@ -1,5 +1,5 @@
 export class UpdateScheduleDto {
-    scheduled_at?: Date;
-    end_at?: Date;
+    scheduled_at?: number;
+    end_at?: number;
     notes?: string;
 }

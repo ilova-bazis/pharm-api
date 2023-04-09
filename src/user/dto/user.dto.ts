@@ -21,7 +21,7 @@ export class UserDto {
         this.patient_id = user.patient_id;
         this.pharmacy_id = user.pharmacy_id;
         this.created_at = user.created_at.getTime();
-        this.updated_at = user.updated_at.getTime();
-        this.last_active = user.last_active.getTime();
+        this.updated_at = user.updated_at?.getTime();
+        this.last_active = user.last_active?.getDate();
     }
 }

@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
 import { CreatePatientDto, PatientDto } from './dto';
 import { PatientService } from './patient.service';
+import { GetUser } from 'src/auth/decorator';
+import { User } from '@prisma/client';
 
 @UseGuards(JwtGuard)
 @Controller('patient')
@@ -20,8 +22,12 @@ export class PatientController {
         return this.patientService.search(name);
     }
 
-    @Post('/')
-    async create(@Body() dto: CreatePatientDto): Promise<PatientDto> {
+    @Post('')
+    async create(
+        @GetUser() user: User,
+        @Body() dto: CreatePatientDto,
+    ): Promise<PatientDto> {
+        console.log(dto);
         return this.patientService.create(dto);
     }
 }

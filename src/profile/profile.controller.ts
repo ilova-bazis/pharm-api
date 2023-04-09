@@ -10,7 +10,7 @@ import { ProfileService } from './profile.service';
 export class ProfileController {
     constructor(private profileService: ProfileService) {}
 
-    @Post('/')
+    @Post('')
     async create(
         @GetUser() user: User,
         @Body() dto: CreateProfileDto,

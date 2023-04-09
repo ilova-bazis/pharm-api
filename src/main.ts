@@ -10,7 +10,7 @@ const httpsOptions = {
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, { httpsOptions });
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+    app.useGlobalPipes(new ValidationPipe({ whitelist: false , transform: true, forbidUnknownValues: false}));
 
     await app.listen(443, '0.0.0.0');
 }

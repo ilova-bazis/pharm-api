@@ -15,7 +15,7 @@ export class PrescriptionService {
             throw new Error('User is not a doctor');
         }
 
-        this.prisma.prescription.create({
+        const prescription = this.prisma.prescription.create({
             data: {
                 doctor_id: user.doctor_id,
                 patient_id: dto.patient_id,
@@ -35,11 +35,20 @@ export class PrescriptionService {
                 },
             },
         });
-        return new PrescriptionDto();
+        return new PrescriptionDto(prescription);
     }
 
-    async getAll(user: User): Promise<PrescriptionDto[]> {
-        return [];
+    async getAll(user: User, patient_id: number): Promise<PrescriptionDto[]> {
+        if (!user.doctor_id) {
+            throw new Error('User is not a doctor');
+        }
+
+        const prescriptions = await this.prisma.prescription.findMany({
+            where: {
+                patient_id: patient_id,
+            },
+        });
+        return prescriptions.map((val) => new PrescriptionDto(val));
     }
 
     // add items to prescription

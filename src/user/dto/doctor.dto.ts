@@ -7,7 +7,7 @@ export class DoctorDto {
     last_name: string;
     middle_name: string;
     sex: string;
-    dob: Date;
+    dob: number;
     location_id: number;
     speciality_id: number;
 
@@ -17,7 +17,7 @@ export class DoctorDto {
         this.last_name = person.last_name;
         this.middle_name = person.middle_name;
         this.sex = person.sex;
-        this.dob = person.dob;
+        this.dob = person.dob.getTime();
         this.location_id = doctor.location_id;
         this.speciality_id = doctor.speciality_id;
     }

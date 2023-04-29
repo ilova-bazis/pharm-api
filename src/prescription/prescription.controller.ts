@@ -1,4 +1,12 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    ParseIntPipe,
+    Post,
+    UseGuards,
+} from '@nestjs/common';
 import { User } from '@prisma/client';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
@@ -18,8 +26,11 @@ export class PrescriptionController {
         return this.prescriptionService.create(user, dto);
     }
 
-    @Post('all')
-    async getAll(@GetUser() user: User): Promise<PrescriptionDto[]> {
-        return this.prescriptionService.getAll(user);
+    @Get('all/:id')
+    async getAll(
+        @GetUser() user: User,
+        @Param('id', ParseIntPipe) patient_id: number,
+    ): Promise<PrescriptionDto[]> {
+        return this.prescriptionService.getAll(user, patient_id);
     }
 }

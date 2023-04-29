@@ -5,7 +5,7 @@ import { CreatePrescriptionDto, PrescriptionDto } from './dto';
 import crypto from 'crypto';
 @Injectable()
 export class PrescriptionService {
-    constructor(private prisma: PrismaService, ) {}
+    constructor(private prisma: PrismaService) {}
 
     async create(
         user: User,

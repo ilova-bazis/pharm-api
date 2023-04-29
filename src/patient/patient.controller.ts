@@ -2,6 +2,7 @@ import {
     Body,
     Controller,
     Get,
+    Param,
     ParseIntPipe,
     Post,
     Query,
@@ -42,7 +43,7 @@ export class PatientController {
     }
 
     @Get(':id')
-    async getOne(@GetUser() user: User, @Query('id', ParseIntPipe) id: number) {
+    async getOne(@GetUser() user: User, @Param('id', ParseIntPipe) id: number) {
         if (!user.doctor_id && !user.admin_id) throw new Error('Not allowed');
         return this.patientService.getOne(id);
     }

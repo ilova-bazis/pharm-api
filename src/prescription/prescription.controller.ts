@@ -30,8 +30,12 @@ export class PrescriptionController {
     async getAll(
         @GetUser() user: User,
         @Param('id', ParseIntPipe) patient_id: number,
-    ): Promise<PrescriptionDto[]> {
-        return this.prescriptionService.getAll(user, patient_id);
+    ): Promise<{ prescriptions: PrescriptionDto[] }> {
+        const prescriptions = await this.prescriptionService.getAll(
+            user,
+            patient_id,
+        );
+        return { prescriptions };
     }
 
     @Post('sing')

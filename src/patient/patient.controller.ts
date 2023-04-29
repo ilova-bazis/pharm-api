@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    Post,
+    Query,
+    UseGuards,
+    UsePipes,
+    ValidationPipe,
+} from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
 import { CreatePatientDto, PatientDto } from './dto';
 import { PatientService } from './patient.service';
@@ -29,5 +38,11 @@ export class PatientController {
     ): Promise<PatientDto> {
         console.log(dto);
         return this.patientService.create(dto);
+    }
+
+    @Get(':id')
+    async getOne(@GetUser() user: User, @Query('id') id: number) {
+        if (!user.doctor_id || !user.admin_id) throw new Error('Not allowed');
+        return this.patientService.getOne(id);
     }
 }

@@ -76,4 +76,16 @@ export class PatientService {
         });
         return new PatientDto(patient.id, person, address);
     }
+
+    async getOne(id: number): Promise<PatientDto> {
+        const person = await this.prisma.person.findUnique({
+            where: {
+                patient_id: id,
+            },
+            include: {
+                adress: true,
+            },
+        });
+        return new PatientDto(id, person, person.adress);
+    }
 }

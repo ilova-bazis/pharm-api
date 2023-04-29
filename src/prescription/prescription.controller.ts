@@ -33,4 +33,12 @@ export class PrescriptionController {
     ): Promise<PrescriptionDto[]> {
         return this.prescriptionService.getAll(user, patient_id);
     }
+
+    @Post('sing')
+    async sign(
+        @GetUser() user: User,
+        @Body() dto: { prescription_id: number },
+    ) {
+        return this.prescriptionService.sign(user, dto.prescription_id);
+    }
 }

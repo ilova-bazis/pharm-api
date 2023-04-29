@@ -42,8 +42,7 @@ export class PatientController {
 
     @Get(':id')
     async getOne(@GetUser() user: User, @Query('id') id: number) {
-        if (!user.doctor_id) throw new Error('Not allowed');
-        if (!user.admin_id) throw new Error('Not allowed');
+        if (!user.doctor_id && !user.admin_id) throw new Error('Not allowed');
         return this.patientService.getOne(id);
     }
 }

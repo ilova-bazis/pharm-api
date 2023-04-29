@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Signature, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreatePrescriptionDto, PrescriptionDto } from './dto';
+import {
+    CreatePrescriptionDto,
+    CreatePrescriptionItemDto,
+    PrescriptionDto,
+} from './dto';
 import crypto from 'crypto';
 @Injectable()
 export class PrescriptionService {
@@ -52,7 +56,57 @@ export class PrescriptionService {
     }
 
     // add items to prescription
-    async addItem(user: User, prescriptionId: number, itemId: number) {
+    async addItem(user: User, dto: CreatePrescriptionItemDto) {
+        if (!user.doctor_id) {
+            throw new Error('User is not a doctor');
+        }
+
+        const prescription = await this.prisma.prescription.findFirst({
+            where: {
+                id: dto.prescription_id,
+                doctor_id: user.doctor_id,
+            },
+        });
+        if (!prescription) {
+            throw new Error('Prescription not found');
+        }
+
+        const item = await this.prisma.prescriptionItem.create({
+            data: {
+                prescription_id: dto.prescription_id,
+                product_id: dto.medicine_id,
+                dispense: dto.dispense,
+                dosage: dto.dosage,
+                frequency: dto.frequency,
+                notes: dto.notes,
+            },
+        });
+        return item;
+    }
+
+    // delete items from prescription
+    async deleteItem(user: User, item_id: number) {
+        if (!user.doctor_id) {
+            throw new Error('User is not a doctor');
+        }
+
+        const item = await this.prisma.prescriptionItem.findFirst({
+            where: {
+                id: item_id,
+                prescription: {
+                    doctor_id: user.doctor_id,
+                },
+            },
+        });
+        if (!item) {
+            throw new Error('Item not found');
+        }
+
+        await this.prisma.prescriptionItem.delete({
+            where: {
+                id: item_id,
+            },
+        });
         return;
     }
 

@@ -1,7 +1,10 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
+    HttpCode,
+    HttpStatus,
     Param,
     ParseIntPipe,
     Post,
@@ -10,7 +13,11 @@ import {
 import { User } from '@prisma/client';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
-import { CreatePrescriptionDto, PrescriptionDto } from './dto';
+import {
+    CreatePrescriptionDto,
+    CreatePrescriptionItemDto,
+    PrescriptionDto,
+} from './dto';
 import { PrescriptionService } from './prescription.service';
 
 @UseGuards(JwtGuard)
@@ -37,6 +44,32 @@ export class PrescriptionController {
         );
         return { prescriptions };
     }
+
+    @HttpCode(HttpStatus.CREATED)
+    @Post('item')
+    async addItem(
+        @GetUser() user: User,
+        @Body() dto: CreatePrescriptionItemDto,
+    ) {
+        return this.prescriptionService.addItem(user, dto);
+    }
+
+    @Delete('item/:id')
+    async deleteItem(
+        @GetUser() user: User,
+        @Param('id', ParseIntPipe) item_id: number,
+    ) {
+        return this.prescriptionService.deleteItem(user, item_id);
+    }
+
+    // @Put(':id')
+    // async update(
+    //     @GetUser() user: User,
+    //     @Param('id', ParseIntPipe) prescription_id: number,
+    //     @Body() dto: CreatePrescriptionDto,
+    // ): Promise<PrescriptionDto> {
+    //     return this.prescriptionService.update(user, prescription_id, dto);
+    // }
 
     @Post('sing')
     async sign(

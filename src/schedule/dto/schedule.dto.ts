@@ -18,7 +18,7 @@ export class ScheduleDto {
         this.end_at = schedule.end_at.getTime();
         this.notes = schedule.notes;
         this.patient = {
-            id: patient.id,
+            id: patient.patient_id,
             first_name: patient.first_name,
             last_name: patient.last_name,
         };

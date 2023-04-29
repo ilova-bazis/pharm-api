@@ -8,6 +8,7 @@ import {
     Param,
     ParseIntPipe,
     Post,
+    Put,
     UseGuards,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
@@ -19,6 +20,7 @@ import {
     PrescriptionDto,
 } from './dto';
 import { PrescriptionService } from './prescription.service';
+import { UpdatePrescriptionItemDto } from './dto/update-prescription-item.dto';
 
 @UseGuards(JwtGuard)
 @Controller('prescription')
@@ -31,6 +33,14 @@ export class PrescriptionController {
         @Body() dto: CreatePrescriptionDto,
     ): Promise<PrescriptionDto> {
         return this.prescriptionService.create(user, dto);
+    }
+
+    @Delete('/:id')
+    async delete(
+        @GetUser() user: User,
+        @Param('id', ParseIntPipe) prescription_id: number,
+    ) {
+        return this.prescriptionService.delete(user, prescription_id);
     }
 
     @Get('all/:id')
@@ -54,6 +64,7 @@ export class PrescriptionController {
         return this.prescriptionService.addItem(user, dto);
     }
 
+    @HttpCode(HttpStatus.NO_CONTENT)
     @Delete('item/:id')
     async deleteItem(
         @GetUser() user: User,
@@ -70,6 +81,15 @@ export class PrescriptionController {
     // ): Promise<PrescriptionDto> {
     //     return this.prescriptionService.update(user, prescription_id, dto);
     // }
+
+    @Put('item/:id')
+    async updateItem(
+        @GetUser() user: User,
+        @Param('id', ParseIntPipe) item_id: number,
+        @Body() dto: UpdatePrescriptionItemDto,
+    ) {
+        return this.prescriptionService.updateItem(user, item_id, dto);
+    }
 
     @Post('sing')
     async sign(

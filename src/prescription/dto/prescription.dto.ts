@@ -16,7 +16,7 @@ export class PrescriptionDto {
         this.pharmacy_id = prescription.pharmacy_id;
         this.status = prescription.status;
         this.items = prescription.items.map((val) => {
-            return new PrescriptionItemDto(val);
+            return new PrescriptionItemDto(val, val.product);
         });
         this.created_at = prescription.created_at.getTime();
         this.updated_at = prescription.updated_at.getTime();

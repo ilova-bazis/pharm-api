@@ -148,14 +148,14 @@ model Pharmacy {
 }
 
 model PharmacyLocation {
-  // id            Int     @id @default(autoincrement())
+  id            Int         @id @default(autoincrement()) 
   pharmacy      Pharmacy    @relation(fields: [pharmacy_id], references: [id])
   pharmacy_id   Int     
   location      Location    @relation(fields: [location_id], references: [id])
   location_id   Int
   assigned_at   DateTime    @default(now())    
 
-  @@id([pharmacy_id, location_id])
+  // @@id([pharmacy_id, location_id])
   @@map("pharmacy_location_map")
 
 }
@@ -193,6 +193,7 @@ model Prescription {
   patient_id      Int
   status          String
   signature       String
+  notes           String
   created_at      DateTime      @default(now())
   updated_at      DateTime      @updatedAt
   signed_at       DateTime?

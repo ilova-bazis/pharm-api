@@ -5,4 +5,5 @@ export class CreatePrescriptionDto {
     doctor_id: number;
     pharmacy_id: number;
     items: CreatePrescriptionItemDto[];
+    notes: string;
 }

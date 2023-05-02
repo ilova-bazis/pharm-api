@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+
 import { PharmacyLocationDto } from './dto/pharmacy.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class PharmacyService {
-    constructor(private prisma: PrismaClient) {}
+    constructor(private prisma: PrismaService) {}
 
     async getPharmacy(): Promise<PharmacyLocationDto[]> {
         const locations = await this.prisma.pharmacyLocation.findMany({

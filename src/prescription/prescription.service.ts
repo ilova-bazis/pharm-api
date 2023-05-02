@@ -27,6 +27,7 @@ export class PrescriptionService {
                 pharmacy_id: dto.pharmacy_id,
                 status: 'NEW',
                 signature: '',
+                notes: dto.notes,
                 items: {
                     create: dto.items.map((val) => {
                         return {

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { PharmacyLocationDto } from './dto/pharmacy.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { AddressDto } from 'src/profile/dto';
 
 @Injectable()
 export class PharmacyService {
@@ -11,7 +12,11 @@ export class PharmacyService {
         const locations = await this.prisma.pharmacyLocation.findMany({
             include: {
                 pharmacy: true,
-                location: true,
+                location: {
+                    include: {
+                        address: true,
+                    },
+                },
             },
         });
 
@@ -20,7 +25,8 @@ export class PharmacyService {
                 id: val.id,
                 pharmacy_id: val.pharmacy.id,
                 name: val.pharmacy.name,
-                address: val.location.name,
+                location_name: val.location.name,
+                address: new AddressDto(val.location.address),
                 created_at: val.assigned_at.getTime(),
             };
         });

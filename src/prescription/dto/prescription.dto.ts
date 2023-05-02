@@ -9,6 +9,7 @@ export class PrescriptionDto {
     items: PrescriptionItemDto[];
     created_at: number;
     updated_at: number;
+    notes: string;
     constructor(prescription) {
         this.id = prescription.id;
         this.patient_id = prescription.patient_id;
@@ -20,5 +21,6 @@ export class PrescriptionDto {
         });
         this.created_at = prescription.created_at.getTime();
         this.updated_at = prescription.updated_at.getTime();
+        this.notes = prescription.notes;
     }
 }

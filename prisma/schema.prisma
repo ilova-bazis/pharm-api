@@ -124,6 +124,7 @@ model Address {
   updated_at    DateTime
 
   persons      Person[]
+  locations    Location[]
 
   @@map("addresses")
 }
@@ -182,6 +183,7 @@ model Location {
   type        LocationType
   doctors     Doctor[]
   pharmacies  PharmacyLocation[]
+  address     Address?      @relation(fields: [address_id], references: [id])
 
   @@map("locations")
 }

@@ -1,8 +1,11 @@
+import { AddressDto } from 'src/profile/dto';
+
 export class PharmacyLocationDto {
     id: number;
     pharmacy_id: number;
     name: string;
-    address: string;
+    location_name: string;
+    address: AddressDto;
     created_at: number;
 }
 export class PharmacyDto {

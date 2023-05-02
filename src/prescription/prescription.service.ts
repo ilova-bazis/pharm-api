@@ -16,11 +16,11 @@ export class PrescriptionService {
         user: User,
         dto: CreatePrescriptionDto,
     ): Promise<PrescriptionDto> {
-        if (!user.doctor_id) {
-            throw new Error('User is not a doctor');
-        }
+        // if (!user.doctor_id) {
+        //     throw new Error('User is not a doctor');
+        // }
 
-        const prescription = this.prisma.prescription.create({
+        const prescription = await this.prisma.prescription.create({
             data: {
                 doctor_id: user.doctor_id,
                 patient_id: dto.patient_id,
@@ -28,17 +28,20 @@ export class PrescriptionService {
                 status: 'NEW',
                 signature: '',
                 notes: dto.notes,
-                items: {
-                    create: dto.items.map((val) => {
-                        return {
-                            product_id: val.medicine_id,
-                            dispense: val.dispense,
-                            dosage: val.dosage,
-                            frequency: val.frequency,
-                            notes: val.notes,
-                        };
-                    }),
-                },
+                items:
+                    dto.items !== undefined && dto.items.length > 0
+                        ? {
+                              create: dto.items.map((val) => {
+                                  return {
+                                      product_id: val.medicine_id,
+                                      dispense: val.dispense,
+                                      dosage: val.dosage,
+                                      frequency: val.frequency,
+                                      notes: val.notes,
+                                  };
+                              }),
+                          }
+                        : undefined,
             },
             include: {
                 items: {
@@ -48,6 +51,7 @@ export class PrescriptionService {
                 },
             },
         });
+
         return new PrescriptionDto(prescription);
     }
 

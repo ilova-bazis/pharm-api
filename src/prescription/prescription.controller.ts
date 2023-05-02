@@ -32,7 +32,7 @@ export class PrescriptionController {
         @GetUser() user: User,
         @Body() dto: CreatePrescriptionDto,
     ): Promise<PrescriptionDto> {
-        console.log(dto)
+        console.log(dto);
         return this.prescriptionService.create(user, dto);
     }
 

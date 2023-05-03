@@ -63,6 +63,7 @@ export class PrescriptionController {
         @GetUser() user: User,
         @Body() dto: CreatePrescriptionItemDto,
     ): Promise<PrescriptionItemDto> {
+        console.log(dto)
         const item = await this.prescriptionService.addItem(user, dto);
         return new PrescriptionItemDto(item, item.product);
     }

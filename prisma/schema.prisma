@@ -60,14 +60,15 @@ model Person {
 }
 
 model Patient {
-  id            Int         @id @default(autoincrement())
+  id              Int         @id @default(autoincrement())
+  family_doctor   String  @default("")
+  created_at      DateTime
+  updated_at      DateTime    @updatedAt
   
-  created_at    DateTime
-  updated_at    DateTime    @updatedAt
-  
-  person        Person?   
-  users         User[]
-  
+  person          Person?   
+  users           User[]
+
+
   appointments  Appointment[]
 
   @@map("patients")
@@ -84,7 +85,7 @@ model Doctor {
   signature     Signature?
 
   appointments  Appointment[]
-
+  
   @@map("doctors")
 }
 

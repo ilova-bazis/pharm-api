@@ -17,7 +17,7 @@ export class UserController {
     constructor(private userService: UserService) {}
     @Get('/me')
     async getUser(@GetUser() user: User): Promise<UserDto> {
-        return new UserDto(user);
+        return this.userService.getUser(user);
     }
 
     @Patch('/edit')

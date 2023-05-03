@@ -9,7 +9,7 @@ export class PrescriptionItemDto {
     frequency: string;
     dosage: string;
     created_at: number;
-
+    checked_at?: number;
     constructor(item: PrescriptionItem, product: Product) {
         this.id = item.id;
         this.product = new ProductDto(product);
@@ -18,5 +18,6 @@ export class PrescriptionItemDto {
         this.frequency = item.frequency;
         this.dosage = item.dosage;
         this.created_at = item.created_at.getTime();
+        this.checked_at = item.checked_at?.getTime();
     }
 }

@@ -11,7 +11,6 @@ export class PrescriptionDto {
     updated_at: number;
     notes: string;
     constructor(prescription) {
-        console.log(prescription)
         this.id = prescription.id;
         this.patient_id = prescription.patient_id;
         this.doctor_id = prescription.doctor_id;

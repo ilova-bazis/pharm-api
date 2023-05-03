@@ -35,11 +35,18 @@ export class PatientService {
             },
             include: {
                 adress: true,
+                patient: true,
             },
         });
         // const patients = persons.filter((p) => p.patient_id != null);
         const dtos = persons.map(
-            (p) => new PatientDto(p.patient_id, p, p.adress),
+            (p) =>
+                new PatientDto(
+                    p.patient_id,
+                    p,
+                    p.adress,
+                    p.patient.family_doctor,
+                ),
         );
         return { patients: dtos };
     }
@@ -58,6 +65,7 @@ export class PatientService {
 
         const patient = await this.prisma.patient.create({
             data: {
+                family_doctor: dto.familiy_doctor ?? '',
                 created_at: new Date(),
                 updated_at: new Date(),
             },
@@ -74,7 +82,12 @@ export class PatientService {
                 patient_id: patient.id,
             },
         });
-        return new PatientDto(patient.id, person, address);
+        return new PatientDto(
+            patient.id,
+            person,
+            address,
+            patient.family_doctor,
+        );
     }
 
     async getOne(id: number): Promise<PatientDto> {
@@ -84,8 +97,14 @@ export class PatientService {
             },
             include: {
                 adress: true,
+                patient: true,
             },
         });
-        return new PatientDto(id, person, person.adress);
+        return new PatientDto(
+            id,
+            person,
+            person.adress,
+            person.patient.family_doctor,
+        );
     }
 }

@@ -12,8 +12,8 @@ export class UserDto {
     created_at: number;
     updated_at: number;
     last_active?: number;
-
-    constructor(user: User) {
+    profile: ProfileDto;
+    constructor(user: User, profile?: ProfileDto) {
         this.id = user.id;
         this.username = user.username;
         this.avatar = user.avatar;
@@ -23,5 +23,6 @@ export class UserDto {
         this.created_at = user.created_at.getTime();
         this.updated_at = user.updated_at?.getTime();
         this.last_active = user.last_active?.getDate();
+        this.profile = profile;
     }
 }

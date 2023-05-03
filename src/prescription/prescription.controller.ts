@@ -92,10 +92,10 @@ export class PrescriptionController {
         return this.prescriptionService.updateItem(user, item_id, dto);
     }
 
-    @Post('sing')
+    @Post('sign')
     async sign(
         @GetUser() user: User,
-        @Body() dto: { prescription_id: number },
+        @Body() dto: { prescription_id: number; password: string },
     ) {
         return this.prescriptionService.sign(user, dto.prescription_id);
     }

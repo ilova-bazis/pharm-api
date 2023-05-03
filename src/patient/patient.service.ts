@@ -14,13 +14,13 @@ export class PatientService {
         const ors = [];
         for (let i = 0; i < tokens.length; i++) {
             ors.push({
-                first_name: { contains: tokens[i] },
+                first_name: { contains: tokens[i], mode: 'insensitive' },
             });
             ors.push({
-                last_name: { contains: tokens[i] },
+                last_name: { contains: tokens[i], mode: 'insensitive' },
             });
             ors.push({
-                middle_name: { contains: tokens[i] },
+                middle_name: { contains: tokens[i], mode: 'insensitive' },
             });
         }
 

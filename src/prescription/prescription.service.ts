@@ -20,9 +20,9 @@ export class PrescriptionService {
         user: User,
         dto: CreatePrescriptionDto,
     ): Promise<PrescriptionDto> {
-        // if (!user.doctor_id) {
-        //     throw new Error('User is not a doctor');
-        // }
+        if (!user.doctor_id) {
+            throw new ForbiddenException('User is not a doctor');
+        }
 
         const prescription = await this.prisma.prescription.create({
             data: {
@@ -37,7 +37,7 @@ export class PrescriptionService {
                         ? {
                               create: dto.items.map((val) => {
                                   return {
-                                      product_id: val.medicine_id,
+                                      product_id: val.product_id,
                                       dispense: val.dispense,
                                       dosage: val.dosage,
                                       frequency: val.frequency,
@@ -61,7 +61,7 @@ export class PrescriptionService {
 
     async getAll(user: User, patient_id: number): Promise<PrescriptionDto[]> {
         if (!user.doctor_id) {
-            throw new Error('User is not a doctor');
+            throw new ForbiddenException('User is not a doctor');
         }
 
         const prescriptions = await this.prisma.prescription.findMany({
@@ -98,7 +98,7 @@ export class PrescriptionService {
         const item = await this.prisma.prescriptionItem.create({
             data: {
                 prescription_id: dto.prescription_id,
-                product_id: dto.medicine_id,
+                product_id: dto.product_id,
                 dispense: dto.dispense,
                 dosage: dto.dosage,
                 frequency: dto.frequency,
@@ -118,7 +118,7 @@ export class PrescriptionService {
         dto: UpdatePrescriptionItemDto,
     ) {
         if (!user.doctor_id) {
-            throw new Error('User is not a doctor');
+            throw new ForbiddenException('User is not a doctor');
         }
 
         const item = await this.prisma.prescriptionItem.findFirst({
@@ -130,7 +130,7 @@ export class PrescriptionService {
             },
         });
         if (!item) {
-            throw new Error('Item not found');
+            throw new NotFoundException('Item not found');
         }
         const updatedItem = await this.prisma.prescriptionItem.update({
             where: {
@@ -153,7 +153,7 @@ export class PrescriptionService {
     // delete items from prescription
     async deleteItem(user: User, item_id: number) {
         if (!user.doctor_id) {
-            throw new Error('User is not a doctor');
+            throw new ForbiddenException('User is not a doctor');
         }
 
         const item = await this.prisma.prescriptionItem.findFirst({
@@ -178,7 +178,7 @@ export class PrescriptionService {
 
     async sign(user: User, prescriptionId: number) {
         if (!user.doctor_id) {
-            throw new Error('User is not a doctor');
+            throw new ForbiddenException('User is not a doctor');
         }
         const prescription = await this.prisma.prescription.findFirst({
             where: {
@@ -187,7 +187,7 @@ export class PrescriptionService {
             },
         });
         if (!prescription) {
-            throw new Error('Prescription not found');
+            throw new NotFoundException('Prescription not found');
         }
 
         await this.prisma.prescription.update({
@@ -204,7 +204,7 @@ export class PrescriptionService {
 
     async getSignautre(user: User): Promise<Signature> {
         if (!user.doctor_id) {
-            throw new Error('User is not a doctor');
+            throw new ForbiddenException('User is not a doctor');
         }
         const signature = await this.prisma.signature.findFirst({
             where: {
@@ -227,7 +227,7 @@ export class PrescriptionService {
 
     async delete(user: User, prescriptionId: number) {
         if (!user.doctor_id) {
-            throw new Error('User is not a doctor');
+            throw new ForbiddenException('User is not a doctor');
         }
         const prescription = await this.prisma.prescription.findFirst({
             where: {
@@ -236,7 +236,7 @@ export class PrescriptionService {
             },
         });
         if (!prescription) {
-            throw new Error('Prescription not found');
+            throw new NotFoundException('Prescription not found');
         }
 
         await this.prisma.prescription.delete({

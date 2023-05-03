@@ -18,6 +18,7 @@ import {
     CreatePrescriptionDto,
     CreatePrescriptionItemDto,
     PrescriptionDto,
+    PrescriptionItemDto,
 } from './dto';
 import { PrescriptionService } from './prescription.service';
 import { UpdatePrescriptionItemDto } from './dto/update-prescription-item.dto';
@@ -61,8 +62,9 @@ export class PrescriptionController {
     async addItem(
         @GetUser() user: User,
         @Body() dto: CreatePrescriptionItemDto,
-    ) {
-        return this.prescriptionService.addItem(user, dto);
+    ): Promise<PrescriptionItemDto> {
+        const item = await this.prescriptionService.addItem(user, dto);
+        return new PrescriptionItemDto(item, item.product);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
@@ -88,8 +90,13 @@ export class PrescriptionController {
         @GetUser() user: User,
         @Param('id', ParseIntPipe) item_id: number,
         @Body() dto: UpdatePrescriptionItemDto,
-    ) {
-        return this.prescriptionService.updateItem(user, item_id, dto);
+    ): Promise<PrescriptionItemDto> {
+        const item = await this.prescriptionService.updateItem(
+            user,
+            item_id,
+            dto,
+        );
+        return new PrescriptionItemDto(item, item.product);
     }
 
     @Post('sign')

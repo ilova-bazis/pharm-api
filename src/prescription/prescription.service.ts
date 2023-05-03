@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+    ForbiddenException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { Signature, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
@@ -78,7 +82,7 @@ export class PrescriptionService {
     // add items to prescription
     async addItem(user: User, dto: CreatePrescriptionItemDto) {
         if (!user.doctor_id) {
-            throw new Error('User is not a doctor');
+            throw new ForbiddenException('User is not a doctor');
         }
 
         const prescription = await this.prisma.prescription.findFirst({
@@ -88,7 +92,7 @@ export class PrescriptionService {
             },
         });
         if (!prescription) {
-            throw new Error('Prescription not found');
+            throw new NotFoundException('Prescription not found');
         }
 
         const item = await this.prisma.prescriptionItem.create({
@@ -99,6 +103,9 @@ export class PrescriptionService {
                 dosage: dto.dosage,
                 frequency: dto.frequency,
                 notes: dto.notes,
+            },
+            include: {
+                product: true,
             },
         });
         return item;
@@ -135,6 +142,9 @@ export class PrescriptionService {
                 dosage: dto.dosage,
                 frequency: dto.frequency,
                 notes: dto.notes,
+            },
+            include: {
+                product: true,
             },
         });
         return updatedItem;

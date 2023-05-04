@@ -10,6 +10,8 @@ export class CreateProfileDto {
     sex: Sex;
     dob: number;
     national_id: string;
+    nationality: string;
+    phone_number: string;
     tax_id: string;
     @Type(() => CreateAddressDto)
     address: CreateAddressDto;

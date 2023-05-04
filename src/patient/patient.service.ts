@@ -57,6 +57,7 @@ export class PatientService {
                 city: dto.profile.address.city,
                 country: dto.profile.address.country,
                 address: dto.profile.address.address,
+                region: dto.profile.address.region,
                 created_at: new Date(),
                 updated_at: new Date(),
                 postal_code: dto.profile.address.postal_code,
@@ -65,7 +66,7 @@ export class PatientService {
 
         const patient = await this.prisma.patient.create({
             data: {
-                family_doctor: dto.familiy_doctor ?? '',
+                family_doctor: dto.family_doctor ?? '',
                 created_at: new Date(),
                 updated_at: new Date(),
             },
@@ -82,6 +83,7 @@ export class PatientService {
                 tax_id: dto.profile.tax_id,
                 address_id: address.id,
                 patient_id: patient.id,
+                nationality: 
             },
         });
         return new PatientDto(

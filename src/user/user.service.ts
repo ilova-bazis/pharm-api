@@ -1,7 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { DoctorDto } from './dto/doctor.dto';
 import { UserDto } from './dto';
 import { ProfileDto } from 'src/profile/dto';
 

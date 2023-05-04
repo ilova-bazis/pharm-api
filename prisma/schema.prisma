@@ -45,11 +45,13 @@ model Person {
   sex           Sex
   dob           DateTime
   national_id   String?      @unique
+  nationality   String?
   tax_id        String?      @unique
   address_id    Int
   created_at    DateTime    @default(now())
   updated_at    DateTime    @updatedAt
   patient_id    Int?         @unique
+  phone_number  String?      
 
   user_id       Int?
   users         User[]

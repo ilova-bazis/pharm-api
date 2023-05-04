@@ -27,6 +27,8 @@ export class ProfileService {
                 last_name: dto.last_name,
                 middle_name: dto.middle_name,
                 national_id: dto.national_id,
+                nationality: dto.nationality,
+                phone_number: dto.phone_number,
                 tax_id: dto.tax_id,
                 address_id: address.id,
                 created_at: new Date(),

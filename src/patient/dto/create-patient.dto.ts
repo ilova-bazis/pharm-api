@@ -4,5 +4,5 @@ import { CreateProfileDto } from 'src/profile/dto';
 export class CreatePatientDto {
     @Type(() => CreateProfileDto)
     profile: CreateProfileDto;
-    familiy_doctor?: string;
+    family_doctor?: string;
 }

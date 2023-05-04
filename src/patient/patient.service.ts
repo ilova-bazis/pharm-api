@@ -83,7 +83,8 @@ export class PatientService {
                 tax_id: dto.profile.tax_id,
                 address_id: address.id,
                 patient_id: patient.id,
-                nationality: 
+                nationality: dto.profile.nationality,
+                phone_number: dto.profile.phone_number,
             },
         });
         return new PatientDto(

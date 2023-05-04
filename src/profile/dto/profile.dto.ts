@@ -11,6 +11,8 @@ export class ProfileDto {
     national_id: string;
     tax_id: string;
     address: AddressDto;
+    nationality: string;
+    phone_number: string;
 
     constructor(person: Person, address: Address) {
         this.id = person.id;
@@ -29,5 +31,7 @@ export class ProfileDto {
         this.sex = person.sex;
         this.national_id = person.national_id;
         this.tax_id = person.tax_id;
+        this.nationality = person.nationality;
+        this.phone_number = person.phone_number;
     }
 }

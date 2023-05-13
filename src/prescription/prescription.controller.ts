@@ -107,4 +107,12 @@ export class PrescriptionController {
     ) {
         return this.prescriptionService.sign(user, dto.prescription_id);
     }
+
+    @Put('check/:id')
+    async check(
+        @GetUser() user: User,
+        @Param('id', ParseIntPipe) item_id: number,
+    ) {
+        return this.prescriptionService.checkItem(user, item_id);
+    }
 }

@@ -247,4 +247,32 @@ export class PrescriptionService {
 
         return;
     }
+
+    async checkItem(user: User, itemId: number) {
+        if (!user.pharmacy_id) {
+            throw new ForbiddenException('User is not pharmacy staff');
+        }
+        const item = await this.prisma.prescriptionItem.findFirst({
+            where: {
+                id: itemId,
+                prescription: {
+                    doctor_id: user.doctor_id,
+                },
+            },
+        });
+        if (!item) {
+            throw new NotFoundException('Item not found');
+        }
+
+        await this.prisma.prescriptionItem.update({
+            where: {
+                id: itemId,
+            },
+            data: {
+                checked_at: new Date(),
+            },
+        });
+
+        return;
+    }
 }

@@ -1,25 +1,14 @@
-import {
-    ForbiddenException,
-    Injectable,
-    NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { Signature, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-    CreatePrescriptionDto,
-    CreatePrescriptionItemDto,
-    PrescriptionDto,
-} from './dto';
+import { CreatePrescriptionDto, CreatePrescriptionItemDto, PrescriptionDto } from './dto';
 import crypto from 'crypto';
 import { UpdatePrescriptionItemDto } from './dto/update-prescription-item.dto';
 @Injectable()
 export class PrescriptionService {
     constructor(private prisma: PrismaService) {}
 
-    async create(
-        user: User,
-        dto: CreatePrescriptionDto,
-    ): Promise<PrescriptionDto> {
+    async create(user: User, dto: CreatePrescriptionDto): Promise<PrescriptionDto> {
         if (!user.doctor_id) {
             throw new ForbiddenException('User is not a doctor');
         }
@@ -112,11 +101,7 @@ export class PrescriptionService {
     }
 
     // update items in prescription
-    async updateItem(
-        user: User,
-        item_id: number,
-        dto: UpdatePrescriptionItemDto,
-    ) {
+    async updateItem(user: User, item_id: number, dto: UpdatePrescriptionItemDto) {
         if (!user.doctor_id) {
             throw new ForbiddenException('User is not a doctor');
         }
@@ -165,7 +150,7 @@ export class PrescriptionService {
             },
         });
         if (!item) {
-            throw new Error('Item not found');
+            throw new NotFoundException('Item not found');
         }
 
         await this.prisma.prescriptionItem.delete({

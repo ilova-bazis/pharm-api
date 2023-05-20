@@ -14,12 +14,7 @@ import {
 import { User } from '@prisma/client';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
-import {
-    CreatePrescriptionDto,
-    CreatePrescriptionItemDto,
-    PrescriptionDto,
-    PrescriptionItemDto,
-} from './dto';
+import { CreatePrescriptionDto, CreatePrescriptionItemDto, PrescriptionDto, PrescriptionItemDto } from './dto';
 import { PrescriptionService } from './prescription.service';
 import { UpdatePrescriptionItemDto } from './dto/update-prescription-item.dto';
 
@@ -29,19 +24,13 @@ export class PrescriptionController {
     constructor(private prescriptionService: PrescriptionService) {}
 
     @Post('/')
-    async create(
-        @GetUser() user: User,
-        @Body() dto: CreatePrescriptionDto,
-    ): Promise<PrescriptionDto> {
+    async create(@GetUser() user: User, @Body() dto: CreatePrescriptionDto): Promise<PrescriptionDto> {
         console.log(dto);
         return this.prescriptionService.create(user, dto);
     }
 
     @Delete('/:id')
-    async delete(
-        @GetUser() user: User,
-        @Param('id', ParseIntPipe) prescription_id: number,
-    ) {
+    async delete(@GetUser() user: User, @Param('id', ParseIntPipe) prescription_id: number) {
         return this.prescriptionService.delete(user, prescription_id);
     }
 
@@ -50,19 +39,13 @@ export class PrescriptionController {
         @GetUser() user: User,
         @Param('id', ParseIntPipe) patient_id: number,
     ): Promise<{ prescriptions: PrescriptionDto[] }> {
-        const prescriptions = await this.prescriptionService.getAll(
-            user,
-            patient_id,
-        );
+        const prescriptions = await this.prescriptionService.getAll(user, patient_id);
         return { prescriptions };
     }
 
     @HttpCode(HttpStatus.CREATED)
     @Post('item')
-    async addItem(
-        @GetUser() user: User,
-        @Body() dto: CreatePrescriptionItemDto,
-    ): Promise<PrescriptionItemDto> {
+    async addItem(@GetUser() user: User, @Body() dto: CreatePrescriptionItemDto): Promise<PrescriptionItemDto> {
         console.log(dto);
         const item = await this.prescriptionService.addItem(user, dto);
         return new PrescriptionItemDto(item, item.product);
@@ -70,10 +53,7 @@ export class PrescriptionController {
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete('item/:id')
-    async deleteItem(
-        @GetUser() user: User,
-        @Param('id', ParseIntPipe) item_id: number,
-    ) {
+    async deleteItem(@GetUser() user: User, @Param('id', ParseIntPipe) item_id: number) {
         return this.prescriptionService.deleteItem(user, item_id);
     }
 
@@ -92,27 +72,17 @@ export class PrescriptionController {
         @Param('id', ParseIntPipe) item_id: number,
         @Body() dto: UpdatePrescriptionItemDto,
     ): Promise<PrescriptionItemDto> {
-        const item = await this.prescriptionService.updateItem(
-            user,
-            item_id,
-            dto,
-        );
+        const item = await this.prescriptionService.updateItem(user, item_id, dto);
         return new PrescriptionItemDto(item, item.product);
     }
 
     @Post('sign')
-    async sign(
-        @GetUser() user: User,
-        @Body() dto: { prescription_id: number; password: string },
-    ) {
+    async sign(@GetUser() user: User, @Body() dto: { prescription_id: number; password: string }) {
         return this.prescriptionService.sign(user, dto.prescription_id);
     }
 
     @Put('check/:id')
-    async check(
-        @GetUser() user: User,
-        @Param('id', ParseIntPipe) item_id: number,
-    ) {
+    async check(@GetUser() user: User, @Param('id', ParseIntPipe) item_id: number) {
         return this.prescriptionService.checkItem(user, item_id);
     }
 }

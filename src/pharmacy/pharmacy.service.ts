@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 
 import { PharmacyLocationDto } from './dto/pharmacy.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -37,12 +37,9 @@ export class PharmacyService {
         // return await this.prisma.pharmacy.findMany();
     }
 
-    async getPharmacyPatients(
-        user: User,
-        location_id: number,
-    ): Promise<PatientDto[]> {
+    async getPharmacyPatients(user: User, location_id: number): Promise<PatientDto[]> {
         if (user.pharmacy_id === null) {
-            throw new Error('You are not authorized to access this resource');
+            throw new UnauthorizedException('You are not authorized to access this resource');
         }
         const location = await this.prisma.pharmacyLocation.findUnique({
             where: {
@@ -58,7 +55,7 @@ export class PharmacyService {
             },
         });
         if (!location) {
-            throw new Error('Location not found');
+            throw new NotFoundException('Location not found');
         }
         // find prescriptions that are assigned to this pharmacy
         const prescriptions = await this.prisma.prescription.findMany({
@@ -78,23 +75,12 @@ export class PharmacyService {
             },
         });
         const patients = prescriptions.map((val) => val.patient);
-        return patients.map(
-            (val) =>
-                new PatientDto(
-                    val.id,
-                    val.person,
-                    val.person.adress,
-                    val.family_doctor,
-                ),
-        );
+        return patients.map((val) => new PatientDto(val.id, val.person, val.person.adress, val.family_doctor));
     }
 
-    async getPatientPrescriptions(
-        user: User,
-        patient_id: number,
-    ): Promise<PrescriptionDto[]> {
+    async getPatientPrescriptions(user: User, patient_id: number): Promise<PrescriptionDto[]> {
         if (user.pharmacy_id === null) {
-            throw new Error('You are not authorized to access this resource');
+            throw new UnauthorizedException('You are not authorized to access this resource');
         }
         const prescriptions = await this.prisma.prescription.findMany({
             where: {
@@ -115,5 +101,4 @@ export class PharmacyService {
             return new PrescriptionDto(val);
         });
     }
-
 }

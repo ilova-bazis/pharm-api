@@ -1,10 +1,4 @@
-import {
-    Controller,
-    Get,
-    Param,
-    ParseIntPipe,
-    UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { PharmacyService } from './pharmacy.service';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
@@ -36,10 +30,7 @@ export class PharmacyController {
         @GetUser() user: User,
         @Param('id', ParseIntPipe) location_id: number,
     ): Promise<{ patients: PatientDto[] }> {
-        const patients = await this.pharmacyService.getPharmacyPatients(
-            user,
-            location_id,
-        );
+        const patients = await this.pharmacyService.getPharmacyPatients(user, location_id);
         return {
             patients: patients,
         };
@@ -51,11 +42,7 @@ export class PharmacyController {
         @GetUser() user: User,
         @Param('id', ParseIntPipe) patient_id: number,
     ): Promise<{ prescriptions: PrescriptionDto[] }> {
-        const prescriptions =
-            await this.pharmacyService.getPatientPrescriptions(
-                user,
-                patient_id,
-            );
+        const prescriptions = await this.pharmacyService.getPatientPrescriptions(user, patient_id);
         return { prescriptions: prescriptions };
     }
 }

@@ -6,6 +6,7 @@ import { User } from '@prisma/client';
 import { PharmacyLocationDto } from './dto/pharmacy.dto';
 import { PatientDto } from 'src/patient/dto';
 import { PrescriptionDto } from 'src/prescription/dto';
+import { PatientsFilterDto } from './dto/patients.filter.dto';
 
 @UseGuards(JwtGuard)
 @Controller('pharmacy')
@@ -29,7 +30,7 @@ export class PharmacyController {
     async getPharmacyLocation(
         @GetUser() user: User,
         @Param('id', ParseIntPipe) location_id: number,
-        @Query() { from, to }: { from?: number; to?: number },
+        @Query() { from, to }: PatientsFilterDto,
     ): Promise<{ patients: PatientDto[] }> {
         console.log(from, to);
         const fromDate = from ? new Date(from) : null;

@@ -240,9 +240,6 @@ export class PrescriptionService {
         const item = await this.prisma.prescriptionItem.findFirst({
             where: {
                 id: itemId,
-                prescription: {
-                    doctor_id: user.doctor_id,
-                },
             },
             include: {
                 prescription: true,

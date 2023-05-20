@@ -18,7 +18,7 @@ export class PrescriptionService {
                 doctor_id: user.doctor_id,
                 patient_id: dto.patient_id,
                 pharmacy_id: dto.pharmacy_id,
-                status: 'NEW',
+                status: PrescriptionStatus.NEW,
                 signature: '',
                 notes: dto.notes,
                 items:
@@ -180,7 +180,7 @@ export class PrescriptionService {
                 id: prescriptionId,
             },
             data: {
-                status: 'SIGNED',
+                signed_at: new Date(),
             },
         });
 
@@ -244,6 +244,9 @@ export class PrescriptionService {
                     doctor_id: user.doctor_id,
                 },
             },
+            include: {
+                prescription: true,
+            },
         });
         if (!item) {
             throw new NotFoundException('Item not found');
@@ -258,6 +261,32 @@ export class PrescriptionService {
             },
         });
 
+        const prescription = await this.prisma.prescription.findFirst({
+            where: {
+                id: item.prescription_id,
+            },
+            include: {
+                items: true,
+            },
+        });
+
+        const allChecked = prescription.items.every((item) => item.checked_at);
+
+        await this.prisma.prescription.update({
+            where: {
+                id: item.prescription_id,
+            },
+            data: {
+                status: allChecked ? PrescriptionStatus.COMPLETED : PrescriptionStatus.CHECKED,
+            },
+        });
+
         return;
     }
+}
+
+export enum PrescriptionStatus {
+    NEW = 'NEW',
+    CHECKED = 'CHECKED',
+    COMPLETED = 'COMPLETED',
 }

@@ -6,6 +6,7 @@ import { AddressDto } from 'src/profile/dto';
 import { User } from '@prisma/client';
 import { PatientDto } from 'src/patient/dto';
 import { PrescriptionDto } from 'src/prescription/dto';
+import { PrescriptionStatus } from 'src/prescription/prescription.service';
 
 @Injectable()
 export class PharmacyService {
@@ -37,7 +38,11 @@ export class PharmacyService {
         // return await this.prisma.pharmacy.findMany();
     }
 
-    async getPharmacyPatients(user: User, location_id: number): Promise<PatientDto[]> {
+    async getPharmacyPatients(
+        user: User,
+        location_id: number,
+        filters: { from?: Date; to?: Date },
+    ): Promise<PatientDto[]> {
         if (user.pharmacy_id === null) {
             throw new UnauthorizedException('You are not authorized to access this resource');
         }
@@ -61,6 +66,19 @@ export class PharmacyService {
         const prescriptions = await this.prisma.prescription.findMany({
             where: {
                 pharmacy_id: location.id,
+                signed_at: {
+                    not: null,
+                },
+                status: {
+                    not: PrescriptionStatus.COMPLETED,
+                },
+                created_at:
+                    filters.from || filters.to
+                        ? {
+                              gte: filters.from ? filters.from : undefined,
+                              lte: filters.to ? filters.to : undefined,
+                          }
+                        : undefined,
             },
             include: {
                 patient: {

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, ParseFloatPipe, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { PharmacyService } from './pharmacy.service';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
@@ -29,8 +29,15 @@ export class PharmacyController {
     async getPharmacyLocation(
         @GetUser() user: User,
         @Param('id', ParseIntPipe) location_id: number,
+        @Query('from', ParseFloatPipe) from?: number,
+        @Query('to', ParseFloatPipe) to?: number,
     ): Promise<{ patients: PatientDto[] }> {
-        const patients = await this.pharmacyService.getPharmacyPatients(user, location_id);
+        const fromDate = from ? new Date(from) : null;
+        const toDate = to ? new Date(to) : null;
+        const patients = await this.pharmacyService.getPharmacyPatients(user, location_id, {
+            from: fromDate,
+            to: toDate,
+        });
         return {
             patients: patients,
         };

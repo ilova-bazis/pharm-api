@@ -70,8 +70,8 @@ model Patient {
   person          Person?   
   users           User[]
 
-
-  appointments  Appointment[]
+  prescriptions   Prescription[]
+  appointments    Appointment[]
 
   @@map("patients")
 }
@@ -203,6 +203,7 @@ model Prescription {
   updated_at      DateTime      @updatedAt
   signed_at       DateTime?
   doctor          Doctor        @relation(fields: [doctor_id], references: [id])
+  patient         Patient       @relation(fields: [patient_id], references: [id])
   items           PrescriptionItem[]
 
   @@map("prescriptions")

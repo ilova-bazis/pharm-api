@@ -29,8 +29,7 @@ export class PharmacyController {
     async getPharmacyLocation(
         @GetUser() user: User,
         @Param('id', ParseIntPipe) location_id: number,
-        @Query('from', ParseFloatPipe) from?: number,
-        @Query('to', ParseFloatPipe) to?: number,
+        @Query() { from, to }: { from?: number; to?: number },
     ): Promise<{ patients: PatientDto[] }> {
         const fromDate = from ? new Date(from) : null;
         const toDate = to ? new Date(to) : null;

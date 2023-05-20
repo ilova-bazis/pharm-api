@@ -31,6 +31,7 @@ export class PharmacyController {
         @Param('id', ParseIntPipe) location_id: number,
         @Query() { from, to }: { from?: number; to?: number },
     ): Promise<{ patients: PatientDto[] }> {
+        console.log(from, to);
         const fromDate = from ? new Date(from) : null;
         const toDate = to ? new Date(to) : null;
         console.log(fromDate, toDate);

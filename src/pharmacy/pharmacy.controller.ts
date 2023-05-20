@@ -33,6 +33,7 @@ export class PharmacyController {
     ): Promise<{ patients: PatientDto[] }> {
         const fromDate = from ? new Date(from) : null;
         const toDate = to ? new Date(to) : null;
+        console.log(fromDate, toDate);
         const patients = await this.pharmacyService.getPharmacyPatients(user, location_id, {
             from: fromDate,
             to: toDate,

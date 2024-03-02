@@ -26,6 +26,8 @@ model User {
   updated_at    DateTime    @updatedAt
   last_active   DateTime?
 
+
+
   doctor        Doctor?     @relation(fields: [doctor_id], references: [id])
   patient       Patient?    @relation(fields: [patient_id], references: [id])
   pharmacy      Pharmacy?   @relation(fields: [pharmacy_id], references: [id])
@@ -33,6 +35,9 @@ model User {
 
   phones        Phone[]
   emails        Email[]
+
+  conversation_to_users  ConversationToUser[]
+  messages      Message[]
 
   @@map("users")
 }
@@ -137,6 +142,8 @@ model Admin {
   
   updated_at    DateTime        @updatedAt
   created_at    DateTime
+
+  @@map("admins")
 }
 
 model Pharmacy {
@@ -282,3 +289,70 @@ enum LocationType {
 
 //   @@map("prescription_status")
 // }
+
+
+// Adding chat feature
+// chat will have message model, conversation model
+
+model Message {
+  id            Int         @id @default(autoincrement())
+  body          String
+  author_id     Int
+  conversation_id Int
+
+  message_type  MessageType
+  // seen_at       DateTime
+  // delivered_at  DateTime
+  // read_at       DateTime
+  // deleted_at    DateTime
+  author        User        @relation(fields: [author_id], references: [id])
+
+  conversation  Conversation? @relation(fields: [conversation_id], references: [id])
+
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+
+  @@map("messages")
+}
+
+model Conversation {
+  id            Int         @id @default(autoincrement())   
+  messages      Message[]
+  type          ConversationType
+  group_name    String?
+  group_image   String?
+  // last_message  Message?
+
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+
+  conversation_to_users  ConversationToUser[]
+
+  @@map("conversations")
+}
+
+model ConversationToUser {
+  // id            Int         @id @default(autoincrement())
+  user_id       Int
+  user          User        @relation(fields: [user_id], references: [id])
+  conversation_id Int       
+  conversation    Conversation @relation(fields: [conversation_id], references: [id])
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+
+  @@id([user_id, conversation_id])
+  @@map("conversation_to_users")
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+}
+
+enum ConversationType {
+  PRIVATE
+  GROUP
+}

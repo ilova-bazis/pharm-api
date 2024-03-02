@@ -12,6 +12,8 @@ import { ProfileModule } from './profile/profile.module';
 import { PatientModule } from './patient/patient.module';
 import { ProductModule } from './product/product.module';
 import { PharmacyModule } from './pharmacy/pharmacy.module';
+import { ChatService } from './chat/chat.service';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
     imports: [
@@ -26,8 +28,9 @@ import { PharmacyModule } from './pharmacy/pharmacy.module';
         PatientModule,
         ProductModule,
         PharmacyModule,
+        ChatModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [AppService, ChatService],
 })
 export class AppModule {}

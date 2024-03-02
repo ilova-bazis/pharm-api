@@ -15,9 +15,7 @@ export class DoctorController {
         return await this.doctorService.getMe(user);
     }
     @Get('all')
-    async getAllDcotor(
-        @GetUser() user: User,
-    ): Promise<{ doctors: DoctorDto[] }> {
+    async getAllDcotor(@GetUser() user: User): Promise<{ doctors: DoctorDto[] }> {
         const doctors = await this.doctorService.getAllDoctor(user);
         return { doctors };
     }

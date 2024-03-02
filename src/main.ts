@@ -5,7 +5,7 @@ import * as fs from 'fs';
 
 const httpsOptions = {
     key: fs.readFileSync('.secrets/key.pem', 'utf-8'),
-    cert: fs.readFileSync('.secrets/server.crt', 'utf-8'),
+    cert: fs.readFileSync('.secrets/cert.pem', 'utf-8'),
 };
 
 async function bootstrap() {

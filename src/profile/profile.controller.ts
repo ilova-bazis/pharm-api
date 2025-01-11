@@ -11,10 +11,7 @@ export class ProfileController {
     constructor(private profileService: ProfileService) {}
 
     @Post('')
-    async create(
-        @GetUser() user: User,
-        @Body() dto: CreateProfileDto,
-    ): Promise<ProfileDto> {
+    async create(@GetUser() user: User, @Body() dto: CreateProfileDto): Promise<ProfileDto> {
         return await this.profileService.create(user, dto);
     }
 }

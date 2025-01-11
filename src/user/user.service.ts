@@ -9,6 +9,9 @@ export class UserService {
     constructor(private prisma: PrismaService) {}
 
     async getUser(user: User): Promise<UserDto> {
+        if (!user.person_id) {
+            throw new ForbiddenException('You are not a person!');
+        }
         const person = await this.prisma.person.findUnique({
             where: {
                 id: user.person_id,

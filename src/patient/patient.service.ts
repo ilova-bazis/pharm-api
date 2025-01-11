@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreatePatientDto, PatientDto } from './dto';
+import { Address, Person, User } from '@prisma/client';
+import { CreateProfileDto } from 'src/profile/dto';
 
 @Injectable()
 export class PatientService {
@@ -39,30 +41,69 @@ export class PatientService {
             },
         });
         // const patients = persons.filter((p) => p.patient_id != null);
-        const dtos = persons.map(
-            (p) =>
-                new PatientDto(
-                    p.patient_id,
-                    p,
-                    p.adress,
-                    p.patient.family_doctor,
-                ),
-        );
+        const dtos = persons.map((p) => new PatientDto(p.patient_id, p, p.adress, p.patient.family_doctor));
         return { patients: dtos };
     }
 
-    async create(dto: CreatePatientDto): Promise<PatientDto> {
+    async createProfile(profile: CreateProfileDto, user_id: number): Promise<Person & { adress: Address }> {
         const address = await this.prisma.address.create({
             data: {
-                city: dto.profile.address.city,
-                country: dto.profile.address.country,
-                address: dto.profile.address.address,
-                region: dto.profile.address.region,
+                city: profile.address.city,
+                country: profile.address.country,
+                address: profile.address.address,
+                region: profile.address.region,
                 created_at: new Date(),
                 updated_at: new Date(),
-                postal_code: dto.profile.address.postal_code,
+                postal_code: profile.address.postal_code,
             },
         });
+
+        const per = await this.prisma.person.create({
+            data: {
+                first_name: profile.first_name,
+                last_name: profile.last_name,
+                middle_name: profile.middle_name,
+                dob: new Date(profile.dob),
+                sex: profile.sex,
+                national_id: profile.national_id,
+                tax_id: profile.tax_id,
+                address_id: address.id,
+                nationality: profile.nationality,
+                phone_number: profile.phone_number,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+        });
+
+        await this.prisma.user.update({
+            where: {
+                id: user_id,
+            },
+            data: {
+                person_id: per.id,
+            },
+        });
+
+        const person = await this.prisma.person.findUnique({
+            where: {
+                id: per.id,
+            },
+            include: {
+                adress: true,
+            },
+        });
+
+        return person;
+    }
+
+    async create(dto: CreatePatientDto, user: User): Promise<PatientDto> {
+        if (user.patient_id !== null) {
+            throw new Error('You are already a patient');
+        }
+
+        if (!dto.profile && !user.person_id) {
+            throw new Error('You should provide a profile');
+        }
 
         const patient = await this.prisma.patient.create({
             data: {
@@ -72,27 +113,30 @@ export class PatientService {
             },
         });
 
-        const person = await this.prisma.person.create({
+        await this.prisma.user.update({
+            where: {
+                id: user.id,
+            },
             data: {
-                first_name: dto.profile.first_name,
-                last_name: dto.profile.last_name,
-                middle_name: dto.profile.middle_name,
-                dob: new Date(dto.profile.dob),
-                sex: dto.profile.sex,
-                national_id: dto.profile.national_id,
-                tax_id: dto.profile.tax_id,
-                address_id: address.id,
                 patient_id: patient.id,
-                nationality: dto.profile.nationality,
-                phone_number: dto.profile.phone_number,
             },
         });
-        return new PatientDto(
-            patient.id,
-            person,
-            address,
-            patient.family_doctor,
-        );
+
+        let person: Person & { adress: Address } = null;
+        if (user.person_id == null) {
+            person = await this.createProfile(dto.profile, user.id);
+        } else {
+            person = await this.prisma.person.findUnique({
+                where: {
+                    id: user.person_id,
+                },
+                include: {
+                    adress: true,
+                },
+            });
+        }
+
+        return new PatientDto(patient.id, person, person.adress, patient.family_doctor);
     }
 
     async getOne(id: number): Promise<PatientDto> {
@@ -105,11 +149,6 @@ export class PatientService {
                 patient: true,
             },
         });
-        return new PatientDto(
-            id,
-            person,
-            person.adress,
-            person.patient.family_doctor,
-        );
+        return new PatientDto(id, person, person.adress, person.patient.family_doctor);
     }
 }

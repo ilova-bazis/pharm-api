@@ -1,6 +1,5 @@
 import { Sex } from '@prisma/client';
 import { CreateAddressDto } from './create-address.dto';
-import { IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateProfileDto {

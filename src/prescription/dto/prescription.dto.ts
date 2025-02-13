@@ -1,3 +1,4 @@
+import { Prescription, PrescriptionItem, Product } from '@prisma/client';
 import { PrescriptionItemDto } from './prescription-item.dto';
 
 export class PrescriptionDto {
@@ -10,7 +11,13 @@ export class PrescriptionDto {
     created_at: number;
     updated_at: number;
     notes: string;
-    constructor(prescription) {
+    constructor(
+        prescription: Prescription & {
+            items: (PrescriptionItem & {
+                product: Product;
+            })[];
+        },
+    ) {
         this.id = prescription.id;
         this.patient_id = prescription.patient_id;
         this.doctor_id = prescription.doctor_id;

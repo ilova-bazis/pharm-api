@@ -34,6 +34,12 @@ export class PrescriptionController {
         return this.prescriptionService.delete(user, prescription_id);
     }
 
+    @Get('my')
+    async getMy(@GetUser() user: User): Promise<{ prescriptions: PrescriptionDto[] }> {
+        const prescriptions = await this.prescriptionService.getMy(user);
+        return { prescriptions };
+    }
+
     @Get('all/:id')
     async getAll(
         @GetUser() user: User,

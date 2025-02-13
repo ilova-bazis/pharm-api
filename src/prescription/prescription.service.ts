@@ -48,6 +48,29 @@ export class PrescriptionService {
         return new PrescriptionDto(prescription);
     }
 
+    async getMy(user: User): Promise<PrescriptionDto[]> {
+        if (!user.patient_id) {
+            return [];
+        }
+
+        const prescriptions = await this.prisma.prescription.findMany({
+            where: {
+                patient_id: user.patient_id,
+            },
+            include: {
+                items: {
+                    include: {
+                        product: true,
+                    },
+                },
+            },
+        });
+
+        return prescriptions.map((val) => {
+            return new PrescriptionDto(val);
+        });
+    }
+
     async getAll(user: User, patient_id: number): Promise<PrescriptionDto[]> {
         if (!user.doctor_id) {
             throw new ForbiddenException('User is not a doctor');

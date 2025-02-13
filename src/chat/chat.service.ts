@@ -43,10 +43,26 @@ export class ChatService {
             mapping[val.conversation_id].push(val.user_id);
         });
 
+        const lastMessages: { [conversationId: number]: Message } = {};
+        await Promise.all(
+            conversationIds.map(async (val) => {
+                const lastMessage = await this.prisma.message.findFirst({
+                    where: {
+                        conversation_id: val.conversation_id,
+                    },
+                    orderBy: {
+                        created_at: 'desc',
+                    },
+                });
+                lastMessages[val.conversation_id] = lastMessage;
+            }),
+        );
+
         const conversationsDto: ConversationDto[] = [];
         conversationIds.forEach((val) => {
+            const lastMessage = lastMessages[val.conversation_id];
             conversationsDto.push(
-                new ConversationDto(conversations[val.conversation_id], mapping[val.conversation_id]),
+                new ConversationDto(conversations[val.conversation_id], lastMessage?.id, mapping[val.conversation_id]),
             );
         });
 
@@ -68,6 +84,45 @@ export class ChatService {
     }
 
     async createConversation(user: User, dto: CreateConversationDto): Promise<ConversationDto> {
+        // Try to find an existing PRIVATE conversation between the two users.
+        const existingConversation = await this.prisma.conversation.findFirst({
+            where: {
+                type: 'PRIVATE',
+                AND: [
+                    { conversation_to_users: { some: { user_id: user.id } } },
+                    { conversation_to_users: { some: { user_id: dto.user_id } } },
+                ],
+            },
+            include: {
+                conversation_to_users: true,
+            },
+        });
+
+        // If a conversation exists and has exactly 2 participants, return it.
+        if (existingConversation && existingConversation.conversation_to_users.length === 2) {
+            return await this.getOneConversation(user, existingConversation.id);
+        }
+        // const newConversation = await this.prisma.conversation.create({
+        //     data: {
+        //         type: 'PRIVATE',
+        //         group_name: null,
+        //         group_image: null,
+        //     },
+        // });
+        // const mapConversations = await this.prisma.conversationToUser.create({
+        //     data: {
+        //         conversation_id: newConversation.id,
+        //         user_id: user.id,
+        //     },
+        // });
+        // const mapConversations2 = await this.prisma.conversationToUser.create({
+        //     data: {
+        //         conversation_id: newConversation.id,
+        //         user_id: dto.user_id,
+        //     },
+        // });
+
+        // Otherwise, create a new conversation.
         const newConversation = await this.prisma.conversation.create({
             data: {
                 type: 'PRIVATE',
@@ -75,17 +130,13 @@ export class ChatService {
                 group_image: null,
             },
         });
-        const mapConversations = await this.prisma.conversationToUser.create({
-            data: {
-                conversation_id: newConversation.id,
-                user_id: user.id,
-            },
-        });
-        const mapConversations2 = await this.prisma.conversationToUser.create({
-            data: {
-                conversation_id: newConversation.id,
-                user_id: dto.user_id,
-            },
+
+        // Create the mapping for both users using createMany for brevity.
+        await this.prisma.conversationToUser.createMany({
+            data: [
+                { conversation_id: newConversation.id, user_id: user.id },
+                { conversation_id: newConversation.id, user_id: dto.user_id },
+            ],
         });
         return await this.getOneConversation(user, newConversation.id);
     }
@@ -105,19 +156,35 @@ export class ChatService {
                 conversation_id: id,
             },
         });
+        const lastMessage = await this.prisma.message.findFirst({
+            where: {
+                conversation_id: id,
+            },
+            orderBy: {
+                created_at: 'desc',
+            },
+        });
         return new ConversationDto(
             conversation,
+            lastMessage.id,
             members.map((val) => val.user_id),
         );
     }
 
-    async getMessages(user: User, conversationId: number, messageId: number, count: number): Promise<MessageDto[]> {
+    async getMessages(
+        user: User,
+        conversationId: number,
+        messageId: number,
+        direction: 'desc' | 'asc',
+        count: number,
+    ): Promise<MessageDto[]> {
         if (!user) throw new ForbiddenException('Not authorized');
         const messages = await this.prisma.message.findMany({
             where: {
                 conversation_id: conversationId,
                 id: {
-                    lt: messageId,
+                    gte: direction === 'asc' ? messageId : undefined,
+                    lte: direction === 'desc' ? messageId : undefined,
                 },
             },
             take: count,

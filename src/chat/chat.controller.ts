@@ -34,9 +34,10 @@ export class ChatController {
         @GetUser() user: User,
         @Param('id') conversationId: number,
         @Query('message_id') messageId: number,
+        @Query('direction') direction: 'desc' | 'asc',
         @Query('count') count: number,
     ) {
-        return { messages: await this.chatService.getMessages(user, conversationId, messageId, count) }; //this.chatService.getMessages(user, conversationId, messageId, count);
+        return { messages: await this.chatService.getMessages(user, conversationId, messageId, direction, count) }; //this.chatService.getMessages(user, conversationId, messageId, count);
     }
 
     @Get('conversation/:id')

@@ -36,16 +36,16 @@ export class PatientService {
                 ],
             },
             include: {
-                adress: true,
+                address: true,
                 patient: true,
             },
         });
         // const patients = persons.filter((p) => p.patient_id != null);
-        const dtos = persons.map((p) => new PatientDto(p.patient_id, p, p.adress, p.patient.family_doctor));
+        const dtos = persons.map((p) => new PatientDto(p.patient_id, p, p.address, p.patient.family_doctor));
         return { patients: dtos };
     }
 
-    async createProfile(profile: CreateProfileDto, user_id: number): Promise<Person & { adress: Address }> {
+    async createProfile(profile: CreateProfileDto, user_id: number): Promise<Person & { address: Address }> {
         const address = await this.prisma.address.create({
             data: {
                 city: profile.address.city,
@@ -89,7 +89,7 @@ export class PatientService {
                 id: per.id,
             },
             include: {
-                adress: true,
+                address: true,
             },
         });
 
@@ -122,7 +122,7 @@ export class PatientService {
             },
         });
 
-        let person: Person & { adress: Address } = null;
+        let person: Person & { address: Address } = null;
         if (user.person_id == null) {
             person = await this.createProfile(dto.profile, user.id);
         } else {
@@ -131,12 +131,12 @@ export class PatientService {
                     id: user.person_id,
                 },
                 include: {
-                    adress: true,
+                    address: true,
                 },
             });
         }
 
-        return new PatientDto(patient.id, person, person.adress, patient.family_doctor);
+        return new PatientDto(patient.id, person, person.address, patient.family_doctor);
     }
 
     async getOne(id: number): Promise<PatientDto> {
@@ -145,10 +145,10 @@ export class PatientService {
                 patient_id: id,
             },
             include: {
-                adress: true,
+                address: true,
                 patient: true,
             },
         });
-        return new PatientDto(id, person, person.adress, person.patient.family_doctor);
+        return new PatientDto(id, person, person.address, person.patient.family_doctor);
     }
 }

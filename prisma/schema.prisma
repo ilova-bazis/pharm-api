@@ -61,7 +61,7 @@ model Person {
   user_id       Int?
   users         User[]
   patient       Patient?     @relation(fields: [patient_id], references: [id])
-  adress        Address     @relation(fields: [address_id], references: [id])
+  address        Address     @relation(fields: [address_id], references: [id])
 
   @@map("persons")
 }

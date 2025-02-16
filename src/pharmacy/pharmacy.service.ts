@@ -85,7 +85,7 @@ export class PharmacyService {
                     include: {
                         person: {
                             include: {
-                                adress: true,
+                                address: true,
                             },
                         },
                     },
@@ -93,7 +93,7 @@ export class PharmacyService {
             },
         });
         const patients = prescriptions.map((val) => val.patient);
-        return patients.map((val) => new PatientDto(val.id, val.person, val.person.adress, val.family_doctor));
+        return patients.map((val) => new PatientDto(val.id, val.person, val.person.address, val.family_doctor));
     }
 
     async getPatientPrescriptions(user: User, patient_id: number): Promise<PrescriptionDto[]> {

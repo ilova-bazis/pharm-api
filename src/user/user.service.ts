@@ -17,12 +17,12 @@ export class UserService {
                 id: user.person_id,
             },
             include: {
-                adress: true,
+                address: true,
             },
         });
         if (!person) {
             throw new ForbiddenException('You are not a person!');
         }
-        return new UserDto(user, new ProfileDto(person, person.adress));
+        return new UserDto(user, new ProfileDto(person, person.address));
     }
 }
